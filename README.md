@@ -21,7 +21,7 @@ Rolling-origin tests 2019-2025, macro average over screens, three seeds (`result
 
 RatioBox never orders nested rulebooks incorrectly (`results/coherence.csv`). Ranking candidates by its one-year MSCI
 breach probability lowers failures at the review one year later by 7.5% and failures at any review within the year by
-3.0% relative to the MSCI 30% entry rule, similar to the boosted classifiers (within 0.2 percentage points)
+2.9% relative to the MSCI 30% entry rule, similar to the boosted classifiers (within 0.2 percentage points)
 (`results/decision_boot.csv`). Its one-year calibration error is higher than that of label-trained classifiers, and against
 the holdings of the Wahed FTSE USA Shariah ETF all forecasters rank removals only weakly (`results/etf_validation.csv`).
 
