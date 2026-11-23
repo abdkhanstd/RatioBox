@@ -8,7 +8,7 @@ os.environ.setdefault('GBM_THREADS', '10')
 steps = [
     ['src/extract_xbrl.py'], ['src/extract_submissions.py'], ['src/build_panel.py'], ['src/features.py'],
     ['src/run_experiments.py', '--groups', 'qcop,qcop_cur,qpoint,qcop_earlier,gbm,surface,surface_cur,gbm_cur,simple', '--workers', '6'],
-    ['src/evaluate.py'], ['src/decision.py'], ['src/robustness.py'], ['src/cost.py'], ['src/export_models.py'],
+    ['src/evaluate.py'], ['src/decision.py'], ['src/robustness.py'], ['src/filing_audit.py'], ['src/cost.py'], ['src/export_models.py'],
     ['src/interval_coverage.py'], ['src/download_etf.py'], ['src/validate_etf.py'], ['src/check_reproduction.py'],
 ]
 for s in steps:

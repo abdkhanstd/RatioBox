@@ -11,15 +11,16 @@ RATIOS = ['r_debt', 'r_cash', 'r_rec']
 OFF = 9.0  # threshold value that switches a ratio screen off
 
 RULEBOOKS = {
-    'MSCI':   {'r_debt': 1 / 3, 'r_cash': 1 / 3, 'r_rec': 1 / 3},
-    'MSCI-M': {'r_debt': 1 / 3, 'r_cash': 1 / 3, 'r_rec': 0.49},
+    'MSCI':   {'r_debt': 1 / 3, 'r_cash': 1 / 3, 'r_rec': 1 / 3},       # MSCI Islamic Index Series, rules in force until 2025
+    'MSCI-M': {'r_debt': 1 / 3, 'r_cash': 1 / 3, 'r_rec': 0.49},       # M-Series thresholds applied to total assets
     'FTSE':   {'r_debt': 1 / 3, 'r_cash': 1 / 3, 'r_rec': 0.50},
     'SC':     {'r_debt': 0.33, 'r_cash': 0.33, 'r_rec': OFF},
 }
-# screens used only for zero-shot evaluation (never seen in training of any model)
+# screens used only for zero-shot evaluation (no model is trained on their labels except the refit baseline;
+# the configuration was chosen on the 2022 window averaging all eight screens)
 UNSEEN = {
-    'MSCI-entry': {'r_debt': 0.30, 'r_cash': 0.30, 'r_rec': 0.30},     # MSCI threshold for new inclusions
-    'MSCI-rec70': {'r_debt': 1 / 3, 'r_cash': 1 / 3, 'r_rec': 0.70},   # hypothetical stress case: receivables threshold raised to 70%
+    'MSCI-entry': {'r_debt': 0.30, 'r_cash': 0.30, 'r_rec': 0.30},     # MSCI entry level for new inclusions, rules until 2025
+    'MSCI-rec70': {'r_debt': 1 / 3, 'r_cash': 1 / 3, 'r_rec': 0.70},   # MSCI thresholds from May 2025 (receivables 70%), without buffers
     'Debt-25':    {'r_debt': 0.25, 'r_cash': OFF, 'r_rec': OFF},        # stricter single-ratio screen
     'Cash-40':    {'r_debt': OFF, 'r_cash': 0.40, 'r_rec': OFF},
 }

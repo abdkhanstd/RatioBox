@@ -50,9 +50,11 @@ python run_all.py
 | firm-quarter panel, screening ratios | `src/build_panel.py` | `data/panel.parquet` |
 | decision-time features and future ratios | `src/features.py` | `data/tasks.parquet` |
 | rolling-origin experiments (2019-2025, h = 1, 4, three seeds) | `src/run_experiments.py` | `results/preds/` |
-| metrics, bootstrap tests, coherence, watch-list capture | `src/evaluate.py` | `results/*.csv` |
+| metrics, firm-clustered paired bootstrap (5,000 resamples, finite-sample p-values 2(1+b)/(B+1), Holm), coherence, watch-list capture | `src/evaluate.py` | `results/*.csv` |
 | admission decisions versus the 30% entry rule | `src/decision.py` | `results/decision*.csv` |
 | robustness: tag changes, listed firms, attrition, quarter-block bootstrap, size of coherence violations | `src/robustness.py` | `results/robust_*.csv` |
+| filing-lag audit: training labels first filed after the first test decision | `src/filing_audit.py` | `results/filing_lag_audit.csv`, `results/threshold_ties.csv` |
+| refit without the late-filed labels (`RB_STRICT_FILING=1 RB_SEEDS=0 python src/run_experiments.py --groups qcop,gbm --out results/preds_strict`), then the comparison | `src/strict_filing_check.py` | `results/robust_strict_filing.csv` |
 | holdings of the Wahed FTSE USA Shariah ETF (Form N-PORT, needs `SEC_USER_AGENT`) | `src/download_etf.py` | `data_raw/etf/nport/` |
 | removals from the fund's holdings versus the forecasts | `src/validate_etf.py` | `results/etf_*.csv` |
 | empirical coverage of the per-ratio forecast intervals (needs `weights/`) | `src/interval_coverage.py` | `results/interval_coverage.csv` |

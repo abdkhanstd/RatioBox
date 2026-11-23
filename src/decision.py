@@ -9,6 +9,7 @@ fail it at any of the next four quarterly reviews (admissions with all four late
 """
 import numpy as np, pandas as pd, glob, argparse
 from screens import RATIOS, RULEBOOKS, UNSEEN, tau_vec
+from evaluate import boot_p
 
 
 def main():
@@ -71,10 +72,10 @@ def main():
             q = Q[rng2.integers(0, len(Q), len(Q))]; f_, r_ = any_rate(q); das.append(f_ - r_)
         das = np.array(das)
         boots.append(dict(method=m, diff_vs_rule=d0, lo=np.percentile(ds, 2.5), hi=np.percentile(ds, 97.5),
-                          p=min(1.0, 2 * min((ds <= 0).mean(), (ds >= 0).mean())), quarters=len(Q),
+                          p=boot_p(ds), quarters=len(Q),
                           rel_reduction=-d0 / (Q[:, 1].sum() / Q[:, 0].sum()),
                           any_diff=da0, any_lo=np.percentile(das, 2.5), any_hi=np.percentile(das, 97.5),
-                          any_p=min(1.0, 2 * min((das <= 0).mean(), (das >= 0).mean())), any_rel=-da0 / ra, rule_any=ra))
+                          any_p=boot_p(das), any_rel=-da0 / ra, rule_any=ra))
         # coverage-risk curve: admit the fraction c of candidates with the lowest forecast (per quarter)
         for c in np.linspace(0.3, 1.0, 71):
             S = pd.concat([g.nsmallest(int(round(c * len(g))), 'p') for _, g in D.groupby('qi')])

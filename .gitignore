@@ -8,5 +8,6 @@ results/pilot/
 results/preds/*.parquet
 results/preds_legacy/
 results/preds_clip/
+results/preds_strict/
 __pycache__/
 *.pyc

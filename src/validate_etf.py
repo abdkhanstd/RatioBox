@@ -10,6 +10,7 @@ Outputs: results/etf_validation.csv (AUC, firm-clustered bootstrap) and results/
 """
 import glob, os, re, json, numpy as np, pandas as pd
 from sklearn.metrics import roc_auc_score
+from evaluate import boot_p
 
 METHODS = ['margin', 'proximity', 'logit', 'gbm', 'gbm-pooled', 'surface', 'qcop']
 PREDECESSORS = {'bunge ltd': 1144519, 'iac inc': 1800227}   # holding name prefix -> registrant with the earlier filings
@@ -62,7 +63,7 @@ def boot_diff(D, a, b, reps=2000, seed=0):
         w = rng.multinomial(len(firms), np.full(len(firms), 1 / len(firms)))[ix]
         ds.append(roc_auc_score(D.y, D[a], sample_weight=w) - roc_auc_score(D.y, D[b], sample_weight=w))
     ds = np.array(ds)
-    return d0, np.percentile(ds, 2.5), np.percentile(ds, 97.5), min(1.0, 2 * min((ds <= 0).mean(), (ds >= 0).mean()))
+    return d0, np.percentile(ds, 2.5), np.percentile(ds, 97.5), boot_p(ds)
 
 
 def holm(p):

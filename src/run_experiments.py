@@ -13,13 +13,26 @@ import models as M
 YEARS = list(range(2019, 2026))
 HORIZONS = [1, 4]
 NEAREST = {'MSCI-entry': 'MSCI', 'MSCI-rec70': 'FTSE', 'Debt-25': 'SC', 'Cash-40': 'SC'}
-SEEDS = [0, 1, 2]
+SEEDS = [int(s) for s in os.environ.get('RB_SEEDS', '0,1,2').split(',')]
+# RB_STRICT_FILING=1 also drops training rows whose target balance sheet was first filed after the first test
+# decision of the window (late filings, 0.05% of training labels; see filing_audit.py). Off for the main results.
+STRICT_FILING = os.environ.get('RB_STRICT_FILING', '0') == '1'
 
 
-def split(X, h, Y):
+def filing_dates():
+    P = pd.read_parquet('data/panel.parquet', columns=['cik', 'q', 'avail'])
+    P['qi'] = P.q.str[:4].astype(int) * 4 + P.q.str[-1].astype(int) - 1
+    return P.drop_duplicates(['cik', 'qi']).set_index(['cik', 'qi']).avail
+
+
+def split(X, h, Y, avail=None):
     fut = X[[f'{k}_f{h}' for k in RATIOS]].notna().all(axis=1)
     tr = X[(X.qi + h <= Y * 4 - 2) & fut & (X.qi >= 2012 * 4)]
     te = X[(X.qi >= Y * 4) & (X.qi <= Y * 4 + 3) & fut]
+    if avail is not None:
+        first = avail.reindex(pd.MultiIndex.from_arrays([te.cik, te.qi])).min()
+        tgt = avail.reindex(pd.MultiIndex.from_arrays([tr.cik, tr.qi + h])).values
+        tr = tr[~(tgt > first)]
     return tr.reset_index(drop=True), te.reset_index(drop=True)
 
 
@@ -50,7 +63,7 @@ def run_job(args):
     M.GBM_PARAMS['num_threads'] = int(os.environ.get('GBM_THREADS', '8'))
     os.makedirs(out_dir, exist_ok=True)
     X = pd.read_parquet('data/tasks.parquet')
-    tr, te = split(X, h, Y)
+    tr, te = split(X, h, Y, filing_dates() if STRICT_FILING else None)
     Rf_tr = tr[[f'{k}_f{h}' for k in RATIOS]].values
     screens = dict(RULEBOOKS); screens.update(UNSEEN)
     recs, cost = [], []

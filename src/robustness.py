@@ -10,7 +10,7 @@
 All metrics use seed-averaged forecasts. Outputs: results/robust_*.csv. --parts selects items (default all).
 """
 import glob, os, argparse, numpy as np, pandas as pd
-from evaluate import metrics, GROUPS
+from evaluate import metrics, GROUPS, boot_p
 from screens import RATIOS
 
 MAIN = ['margin', 'proximity', 'logit', 'gbm', 'gbm-nearest', 'gbm-pooled', 'surface', 'gbm-oracle', 'qcop']
@@ -58,7 +58,7 @@ def quarter_boot(A, a, b, scr, h, reps, rng):
         return np.mean(d)
     d0 = diff(None)
     D = np.array([diff(rng.multinomial(len(qs), np.full(len(qs), 1 / len(qs)))) for _ in range(reps)])
-    return d0, np.percentile(D, 2.5), np.percentile(D, 97.5), min(1.0, 2 * min((D <= 0).mean(), (D >= 0).mean())), len(qs)
+    return d0, np.percentile(D, 2.5), np.percentile(D, 97.5), boot_p(D), len(qs)
 
 
 def main():
